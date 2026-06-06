@@ -10,6 +10,8 @@ A GitHub Pages compatible Progressive Web App inspired by YouTube Music, built w
 - Queue, next, previous, shuffle, and repeat support
 - Music Mode and YouTube Mode without reloading data
 - Local search history suggestions with live API suggestions disabled by default
+- Search history can be disabled or cleared from the sidebar
+- Estimated YouTube API quota usage with a simple help tooltip
 - Offline app shell caching through a service worker
 - Installable PWA manifest
 - Responsive dark interface
@@ -51,4 +53,5 @@ https://your-name.github.io/your-repository/
 - Access tokens are kept in session storage, not long-term storage.
 - The app requests read-only YouTube access.
 - Search results load only when the user presses Enter or the Search button. Typing uses local history suggestions unless API suggestions are explicitly enabled in settings.
+- Signing out requires a confirmation dialog and removes auth-related stored tokens.
 - Playlist editing, liking, subscription changes, mini-player, power saving mode, and playback speed controls are intentionally left as future modules.
