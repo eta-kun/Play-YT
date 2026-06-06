@@ -31,10 +31,29 @@
           <button class="nav-item" data-page="searchPage">Search</button>
         </nav>
         <div class="sidebar-settings">
+          <div class="quota-panel" aria-label="Estimated YouTube API usage">
+            <div class="quota-head">
+              <span>API usage</span>
+              <button class="help-button" id="quotaHelpButton" type="button" aria-label="About YouTube API quota" aria-expanded="false">?</button>
+            </div>
+            <div class="quota-meter" aria-hidden="true">
+              <span id="quotaMeterFill"></span>
+            </div>
+            <p id="quotaUsageText">0% used</p>
+            <p id="quotaResetText">Resets soon</p>
+            <div class="quota-help" id="quotaHelp" role="tooltip" hidden>
+              YouTube gives apps a daily allowance for loading videos, playlists, and search results. Search uses more of that allowance than normal browsing. This number is an estimate for this browser and resets once a day.
+            </div>
+          </div>
           <label class="setting-toggle">
             <input id="searchSuggestionsToggle" type="checkbox">
             <span>Enable search suggestions (may increase API usage)</span>
           </label>
+          <label class="setting-toggle">
+            <input id="searchHistoryToggle" type="checkbox">
+            <span>Save search history on this device</span>
+          </label>
+          <button class="settings-button" id="clearSearchHistoryButton" type="button">Clear all history</button>
         </div>
       </aside>
 
@@ -88,6 +107,21 @@
         <span id="durationTime">0:00</span>
       </div>
     </section>
+
+    <div class="modal-backdrop" id="signOutModal" hidden>
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="signOutTitle" aria-describedby="signOutDescription">
+        <h2 id="signOutTitle">Sign out?</h2>
+        <p id="signOutDescription">This will remove your Google access token from this browser.</p>
+        <label class="confirm-check">
+          <input id="signOutSecondConfirm" type="checkbox">
+          <span>I understand that I will need to sign in again.</span>
+        </label>
+        <div class="modal-actions">
+          <button class="text-button" id="cancelSignOutButton" type="button">Cancel</button>
+          <button class="danger-button" id="confirmSignOutButton" type="button" disabled>Sign out</button>
+        </div>
+      </section>
+    </div>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://www.youtube.com/iframe_api" async></script>
