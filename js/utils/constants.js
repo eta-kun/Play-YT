@@ -1,7 +1,7 @@
 export const CONFIG = {
   // Replace these values before publishing. Keep OAuth redirect origins in Google Cloud
   // limited to your GitHub Pages URL and local test URL.
-  GOOGLE_CLIENT_ID: "YOUR_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com",
+  GOOGLE_CLIENT_ID: "588623947338-alontiigeie7ncsarjplb8lqk91avap1.apps.googleusercontent.com",
   YOUTUBE_API_KEY: "YOUR_YOUTUBE_DATA_API_KEY",
   SCOPES: [
     "https://www.googleapis.com/auth/youtube.readonly"
