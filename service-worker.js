@@ -1,4 +1,4 @@
-const CACHE_NAME = "pulsetube-static-v2";
+const CACHE_NAME = "pulsetube-static-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -15,6 +15,7 @@ const APP_SHELL = [
   "./js/player/queue.js",
   "./js/player/pip.js",
   "./js/storage/searchHistory.js",
+  "./js/storage/quota.js",
   "./js/ui/tabs.js",
   "./js/ui/musicMode.js",
   "./js/ui/youtubeMode.js",
