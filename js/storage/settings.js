@@ -6,7 +6,8 @@ const defaults = {
   repeat: "off",
   shuffle: false,
   powerSaving: false,
-  enableSearchSuggestions: false
+  enableSearchSuggestions: false,
+  saveSearchHistory: true
 };
 
 export function loadSettings() {
