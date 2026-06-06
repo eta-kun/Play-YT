@@ -63,8 +63,14 @@ export function signOut() {
     google.accounts.oauth2.revoke(tokenState.accessToken, () => {});
   }
   tokenState = null;
-  safeSessionRemove(STORAGE_KEYS.auth);
+  clearAuthStorage();
   notify();
+}
+
+export function clearAuthStorage() {
+  safeSessionRemove(STORAGE_KEYS.auth);
+  removeMatchingStorageKeys(sessionStorage, ["pulsetube.auth", "google", "oauth", "token"]);
+  removeMatchingStorageKeys(localStorage, ["pulsetube.auth", "google", "oauth", "token"]);
 }
 
 export async function getAccessToken() {
@@ -106,4 +112,17 @@ function waitForGoogleIdentity() {
       }
     }, 100);
   });
+}
+
+function removeMatchingStorageKeys(storage, fragments) {
+  try {
+    Object.keys(storage).forEach((key) => {
+      const normalized = key.toLowerCase();
+      if (fragments.some((fragment) => normalized.includes(fragment))) {
+        storage.removeItem(key);
+      }
+    });
+  } catch {
+    // Some private browsing modes can block storage enumeration.
+  }
 }
