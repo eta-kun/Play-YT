@@ -1,5 +1,6 @@
 import { getAccessToken } from "./auth.js";
-import { CONFIG, API_PARTS, SPECIAL_PLAYLISTS } from "../utils/constants.js";
+import { CONFIG, API_PARTS, QUOTA, SPECIAL_PLAYLISTS } from "../utils/constants.js";
+import { recordQuotaUsage } from "../storage/quota.js";
 
 async function request(path, params = {}, options = {}) {
   const token = options.public ? null : await getAccessToken();
@@ -21,6 +22,7 @@ async function request(path, params = {}, options = {}) {
     error.reason = reason;
     throw error;
   }
+  recordQuotaUsage(options.quotaCost ?? quotaCostFor(path));
   return payload;
 }
 
@@ -90,7 +92,11 @@ export function searchVideos(query, pageToken) {
     type: "video",
     maxResults: 25,
     pageToken
-  });
+  }, { quotaCost: QUOTA.COSTS.search });
+}
+
+function quotaCostFor(path) {
+  return path === "search" ? QUOTA.COSTS.search : QUOTA.COSTS.default;
 }
 
 function normalizeError(reason) {
