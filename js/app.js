@@ -3,7 +3,8 @@ import { getApiSearchSuggestions } from "./api/search.js";
 import { $, $$, clearNotice, setBusy, showNotice } from "./utils/dom.js";
 import { PAGE_TITLES } from "./utils/constants.js";
 import { loadSettings, saveSettings } from "./storage/settings.js";
-import { getLocalSearchSuggestions, saveSearchQuery } from "./storage/searchHistory.js";
+import { clearSearchHistory, getLocalSearchSuggestions, saveSearchQuery } from "./storage/searchHistory.js";
+import { formatResetTime, getQuotaSummary } from "./storage/quota.js";
 import { logger } from "./utils/logger.js";
 import { initTabs, selectTab } from "./ui/tabs.js";
 import { applyMusicMode } from "./ui/musicMode.js";
@@ -37,6 +38,7 @@ window.addEventListener("DOMContentLoaded", boot);
 async function boot() {
   applySavedMode();
   bindChrome();
+  initQuotaUi();
   initTabs(loadPage);
   initPlayer();
   initInstallPrompt();
@@ -93,7 +95,7 @@ function bindChrome() {
       showNotice("Add your Google OAuth client ID in js/utils/constants.js before signing in.", "warning");
       return;
     }
-    if (authState.isSignedIn) signOut();
+    if (authState.isSignedIn) openSignOutModal();
     else signIn();
   });
   $("#searchForm").addEventListener("submit", (event) => {
@@ -114,6 +116,42 @@ function bindChrome() {
   $("#searchSuggestionsToggle").addEventListener("change", (event) => {
     saveSettings({ enableSearchSuggestions: event.target.checked });
     updateSearchSuggestions();
+  });
+  $("#searchHistoryToggle").addEventListener("change", (event) => {
+    saveSettings({ saveSearchHistory: event.target.checked });
+    $("#clearSearchHistoryButton").disabled = !event.target.checked;
+    if (!event.target.checked) {
+      clearSearchHistory();
+      hideSearchSuggestions();
+    } else {
+      updateSearchSuggestions();
+    }
+  });
+  $("#clearSearchHistoryButton").addEventListener("click", () => {
+    clearSearchHistory();
+    hideSearchSuggestions();
+    showNotice("Search history cleared.", "success");
+  });
+  $("#quotaHelpButton").addEventListener("click", () => {
+    const help = $("#quotaHelp");
+    const isOpen = help.hidden;
+    help.hidden = !isOpen;
+    $("#quotaHelpButton").setAttribute("aria-expanded", String(isOpen));
+  });
+  $("#cancelSignOutButton").addEventListener("click", closeSignOutModal);
+  $("#signOutSecondConfirm").addEventListener("change", (event) => {
+    $("#confirmSignOutButton").disabled = !event.target.checked;
+  });
+  $("#confirmSignOutButton").addEventListener("click", () => {
+    signOut();
+    closeSignOutModal();
+    showNotice("You are signed out. Auth tokens were removed from this browser.", "success");
+  });
+  $("#signOutModal").addEventListener("click", (event) => {
+    if (event.target === $("#signOutModal")) closeSignOutModal();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !$("#signOutModal").hidden) closeSignOutModal();
   });
   $("#menuButton").addEventListener("click", () => $(".app-shell").classList.toggle("is-menu-open"));
   $$("#primaryTabs .nav-item").forEach((button) => {
@@ -163,6 +201,8 @@ function renderProfile(authState) {
 function applySavedMode() {
   const settings = loadSettings();
   $("#searchSuggestionsToggle").checked = settings.enableSearchSuggestions;
+  $("#searchHistoryToggle").checked = settings.saveSearchHistory;
+  $("#clearSearchHistoryButton").disabled = !settings.saveSearchHistory;
   settings.mode === "youtube" ? applyYoutubeMode() : applyMusicMode();
   $$(".mode-button").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.modeChoice === settings.mode);
@@ -172,6 +212,7 @@ function applySavedMode() {
 async function updateSearchSuggestions() {
   const input = $("#searchInput");
   const settings = loadSettings();
+  $("#clearSearchHistoryButton").disabled = !settings.saveSearchHistory;
   const localSuggestions = getLocalSearchSuggestions(input.value);
   renderSearchSuggestions(localSuggestions, localSuggestions.length ? "Recent searches" : "");
 
@@ -186,6 +227,31 @@ async function updateSearchSuggestions() {
       logger.warn("Search suggestions unavailable", error);
     }
   }, 500);
+}
+
+function initQuotaUi() {
+  renderQuotaUi();
+  window.addEventListener("quotausagechange", renderQuotaUi);
+  setInterval(renderQuotaUi, 1000);
+}
+
+function renderQuotaUi() {
+  const quota = getQuotaSummary();
+  $("#quotaMeterFill").style.width = `${quota.percent}%`;
+  $("#quotaUsageText").textContent = `${quota.percent}% used (${quota.used} of ${quota.limit} units)`;
+  $("#quotaResetText").textContent = `Resets in ${formatResetTime(quota.timeRemainingMs)}`;
+}
+
+function openSignOutModal() {
+  $("#signOutSecondConfirm").checked = false;
+  $("#confirmSignOutButton").disabled = true;
+  $("#signOutModal").hidden = false;
+  $("#cancelSignOutButton").focus();
+}
+
+function closeSignOutModal() {
+  $("#signOutModal").hidden = true;
+  $("#loginButton").focus();
 }
 
 function renderSearchSuggestions(items, sourceLabel) {
