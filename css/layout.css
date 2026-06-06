@@ -49,9 +49,77 @@
 }
 
 .sidebar-settings {
+  display: grid;
+  gap: 14px;
   margin-top: 22px;
   padding-top: 18px;
   border-top: 1px solid var(--surface-2);
+}
+
+.quota-panel {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.quota-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-weight: 700;
+}
+
+.help-button {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.quota-meter {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+
+.quota-meter span {
+  display: block;
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 160ms ease;
+}
+
+.quota-panel p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.quota-help {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: calc(100% + 8px);
+  z-index: 20;
+  padding: 12px;
+  border: 1px solid var(--surface-3);
+  border-radius: var(--radius);
+  background: #202020;
+  color: var(--soft);
+  box-shadow: var(--shadow);
+  font-size: 0.86rem;
+  line-height: 1.35;
 }
 
 .setting-toggle {
@@ -69,6 +137,10 @@
   height: 18px;
   margin: 0;
   accent-color: var(--accent);
+}
+
+.settings-button {
+  width: 100%;
 }
 
 .main-area {
