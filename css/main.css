@@ -63,6 +63,8 @@ img {
 .mode-button,
 .nav-item,
 .play-button,
+.settings-button,
+.danger-button,
 .text-button {
   min-height: 40px;
   border: 0;
@@ -87,10 +89,28 @@ img {
 
 .profile-button,
 .install-button,
+.settings-button,
 .text-button {
   padding: 0 14px;
   background: var(--surface-2);
   color: var(--text);
+}
+
+.danger-button {
+  padding: 0 14px;
+  background: var(--danger);
+  color: #1b0000;
+  font-weight: 800;
+}
+
+.danger-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.settings-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .profile-button.is-signed-in {
@@ -150,4 +170,58 @@ h2,
 h3,
 p {
   overflow-wrap: anywhere;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.68);
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.modal {
+  width: min(420px, 100%);
+  padding: 22px;
+  border: 1px solid var(--surface-3);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.modal h2 {
+  margin: 0 0 10px;
+}
+
+.modal p {
+  margin: 0 0 18px;
+  color: var(--soft);
+}
+
+.confirm-check {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  color: var(--soft);
+}
+
+.confirm-check input {
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  accent-color: var(--accent);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
 }
